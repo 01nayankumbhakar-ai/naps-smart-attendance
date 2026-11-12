@@ -23,7 +23,7 @@ IST = ZoneInfo("Asia/Kolkata")
 COMPANY_LAT = float(os.environ.get("COMPANY_LAT", "0"))
 COMPANY_LON = float(os.environ.get("COMPANY_LON", "0"))
 GPS_RADIUS_METERS = float(os.environ.get("GPS_RADIUS_METERS", "150"))
-GPS_REQUIRED_FOR_TRAINEE = os.environ.get("GPS_REQUIRED_FOR_TRAINEE", "false").lower() == "false"
+GPS_REQUIRED_FOR_TRAINEE = os.environ.get("GPS_REQUIRED_FOR_TRAINEE", "false").lower() == "true"
 
 SHIFTS = {
     "A": {"name": "A Shift", "start": "05:45", "end": "14:10"},
