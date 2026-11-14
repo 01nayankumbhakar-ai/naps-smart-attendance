@@ -352,6 +352,6 @@ def export_csv():
 def forbidden(_):
     return "Access denied / Permission nahi hai.", 403
 
-if __name__ == "__main__":
-    init_db()
+init_db()
+    if__name__=="__main__":
     app.run(debug=os.environ.get("FLASK_DEBUG", "false").lower() == "true")
