@@ -1,0 +1,39 @@
+{% extends "base.html" %}{% block content %}
+<h1>Hello, {{ user.name }}</h1>
+<div class="card profile">
+<p><b>Trainee ID:</b> {{ user.trainee_code }}</p><p><b>Department:</b> {{ user.department or '-' }}</p>
+<p><b>Assigned Shift:</b> {{ shifts[user.shift].name }} ({{ shifts[user.shift].start }} - {{ shifts[user.shift].end }})</p>
+<p><b>Date:</b> {{ today }}</p></div>
+<section class="card">
+<h2>Today's Attendance</h2>
+<p><b>Punch In:</b> {{ record.punch_in if record and record.punch_in else 'Not punched' }}</p>
+<p><b>Punch Out:</b> {{ record.punch_out if record and record.punch_out else 'Not punched' }}</p>
+{% if not record or not record.punch_in %}
+<button class="primary" onclick="punch('in')">Punch In</button>
+{% elif not record.punch_out %}
+<button class="danger" onclick="punch('out')">Punch Out</button>
+{% else %}<span class="badge good">Today's attendance complete</span>{% endif %}
+<p class="muted">GPS {{ 'required' if gps_required else 'optional' }}. Location permission allow karna hoga.</p>
+</section>
+<section class="card"><h2>Last 30 Attendance Records</h2><div class="tablewrap"><table>
+<tr><th>Date</th><th>Shift</th><th>Punch In</th><th>Punch Out</th><th>Late</th></tr>
+{% for r in history %}<tr><td>{{ r.duty_date }}</td><td>{{ r.shift }}</td><td>{{ r.punch_in or '-' }}</td><td>{{ r.punch_out or '-' }}</td><td>{{ 'Yes' if r.late else 'No' }}</td></tr>{% else %}<tr><td colspan="5">No attendance history yet.</td></tr>{% endfor %}
+</table></div></section>
+<form id="punchForm" method="post"><input type="hidden" name="latitude" id="latitude"><input type="hidden" name="longitude" id="longitude"></form>
+<script>
+function punch(action) {
+  const form = document.getElementById('punchForm');
+  form.action = '/trainee/punch/' + action;
+  if (!navigator.geolocation) { alert('Is browser mein GPS supported nahi hai.'); return; }
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      document.getElementById('latitude').value = pos.coords.latitude;
+      document.getElementById('longitude').value = pos.coords.longitude;
+      form.submit();
+    },
+    err => alert('GPS location nahi mili. Location permission on karein aur dobara try karein.'),
+    {enableHighAccuracy:true, timeout:15000, maximumAge:0}
+  );
+}
+</script>
+{% endblock %}

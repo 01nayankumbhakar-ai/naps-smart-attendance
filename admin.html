@@ -1,0 +1,42 @@
+{% extends "base.html" %}{% block content %}
+<h1>Admin Dashboard</h1><p class="muted">Today: {{ today }}</p>
+<div class="stats">
+<div class="stat"><small>Total Active Trainees</small><b>{{ total }}</b></div>
+<div class="stat"><small>Present Today</small><b>{{ present }}</b></div>
+<div class="stat"><small>Not Punched In</small><b>{{ absent }}</b></div>
+</div>
+<section class="card">
+<h2>Add Trainee</h2>
+<form method="post" action="{{ url_for('add_trainee') }}" class="gridform">
+<input name="name" placeholder="Full name" required>
+<input name="trainee_code" placeholder="Trainee ID" required>
+<input name="mobile" placeholder="Mobile number" required>
+<input name="password" type="password" placeholder="Initial password (8+ characters)" minlength="8" required>
+<input name="department" placeholder="Department / Trade">
+<select name="shift" required><option value="">Select shift</option><option value="A">A Shift (05:45 AM - 02:10 PM)</option><option value="B">B Shift (02:10 PM - 10:40 PM)</option></select>
+<button class="primary">Create Trainee</button>
+</form>
+</section>
+<section class="card">
+<h2>Today's Attendance</h2>
+<div class="tablewrap"><table>
+<thead><tr><th>Trainee</th><th>ID</th><th>Department</th><th>Shift</th><th>In</th><th>Out</th><th>Status</th><th>Admin action</th></tr></thead>
+<tbody>{% for t in trainees %}
+<tr><td>{{ t.name }}</td><td>{{ t.trainee_code }}</td><td>{{ t.department or '-' }}</td>
+<td>{{ t.shift or '-' }}</td><td>{{ t.punch_in or '-' }}</td><td>{{ t.punch_out or '-' }}</td>
+<td>{% if t.punch_in %}{% if t.late %}<span class="badge warn">Late</span>{% else %}<span class="badge good">Present</span>{% endif %}{% else %}<span class="badge bad">Not punched</span>{% endif %}</td>
+<td class="actions">
+{% if not t.punch_in %}<form method="post" action="{{ url_for('admin_punch',user_id=t.id,action='in') }}"><button class="small primary">Punch In</button></form>
+{% elif not t.punch_out %}<form method="post" action="{{ url_for('admin_punch',user_id=t.id,action='out') }}"><button class="small danger">Punch Out</button></form>{% else %}Complete{% endif %}
+<form method="post" action="{{ url_for('toggle_trainee',user_id=t.id) }}"><button class="small secondary">Deactivate</button></form>
+</td></tr>{% else %}<tr><td colspan="8">No trainees added yet.</td></tr>{% endfor %}</tbody></table></div>
+</section>
+<section class="card">
+<h2>Monthly Reports</h2>
+<form action="{{ url_for('reports') }}" method="get" class="inline"><input type="month" name="month" value="{{ today[:7] }}"><button class="primary">View Report</button></form>
+<h2>Recent Punch Records</h2>
+<div class="tablewrap"><table><tr><th>Date</th><th>Trainee</th><th>Shift</th><th>In</th><th>Out</th></tr>
+{% for r in recent %}<tr><td>{{ r.duty_date }}</td><td>{{ r.name }} ({{ r.trainee_code }})</td><td>{{ r.shift }}</td><td>{{ r.punch_in or '-' }}</td><td>{{ r.punch_out or '-' }}</td></tr>{% endfor %}
+</table></div>
+</section>
+{% endblock %}

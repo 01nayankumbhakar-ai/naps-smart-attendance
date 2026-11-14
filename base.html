@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NAPS Trainee Attendance System</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header><div><strong>NAPS</strong><span> TRAINEE ATTENDANCE SYSTEM</span></div>
+{% if session.get('user_id') %}<nav><span>{{ session.get('name') }}</span><a href="{{ url_for('logout') }}">Logout</a></nav>{% endif %}
+</header>
+<main>
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}<div class="messages">{% for category,message in messages %}<div class="alert {{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}
+{% endwith %}
+{% block content %}{% endblock %}
+</main>
+<footer>NAPS Trainee Attendance System</footer>
+</body></html>

@@ -1,0 +1,10 @@
+{% extends "base.html" %}{% block content %}
+<h1>Monthly Attendance Report</h1>
+<form method="get" class="inline"><input type="month" name="month" value="{{ month }}"><button class="primary">Show</button></form>
+<a class="buttonlink" href="{{ url_for('export_csv',month=month) }}">Download Excel-compatible CSV</a>
+<section class="card"><div class="tablewrap"><table>
+<tr><th>Date</th><th>Trainee ID</th><th>Name</th><th>Department</th><th>Shift</th><th>In</th><th>Out</th><th>Late</th><th>Method</th></tr>
+{% for r in rows %}<tr><td>{{ r.duty_date }}</td><td>{{ r.trainee_code }}</td><td>{{ r.name }}</td><td>{{ r.department or '-' }}</td><td>{{ r.shift }}</td><td>{{ r.punch_in or '-' }}</td><td>{{ r.punch_out or '-' }}</td><td>{{ 'Yes' if r.late else 'No' }}</td><td>{{ r.in_method }}</td></tr>{% else %}<tr><td colspan="9">Is month ka record nahi mila.</td></tr>{% endfor %}
+</table></div></section>
+<a href="{{ url_for('admin_dashboard') }}">Back to Dashboard</a>
+{% endblock %}
