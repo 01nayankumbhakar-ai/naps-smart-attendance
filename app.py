@@ -353,5 +353,5 @@ def forbidden(_):
     return "Access denied / Permission nahi hai.", 403
 
 init_db()
-    if__name__=="__main__":
+if __name__=="__main__":
     app.run(debug=os.environ.get("FLASK_DEBUG", "false").lower() == "true")
